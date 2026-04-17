@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>대전 오월드 늑구 잡기 - 지옥 모드</title>
+    <title>대전 오월드 늑구 잡기 - 마지막 시련 (레이드 보스)</title>
     <style>
         :root {
-            --bg-color: #f0fdf4;
-            --primary-color: #166534;
-            --secondary-color: #22c55e;
-            --accent-color: #fbbf24;
-            --text-color: #1f2937;
+            --bg-color: #0f172a;
+            --primary-color: #dc2626;
+            --secondary-color: #ef4444;
+            --accent-color: #f59e0b;
+            --text-color: #f8fafc;
         }
 
         body {
@@ -28,10 +28,10 @@
         }
 
         .game-wrapper {
-            background: white;
+            background: #1e293b;
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 0 2px #334155;
             text-align: center;
             max-width: 850px;
             width: 100%;
@@ -39,19 +39,20 @@
         }
 
         h1 {
-            color: #b91c1c; /* 지옥모드 색상 */
+            color: #f87171; 
             margin-bottom: 5px;
             font-size: 32px;
             font-weight: 900;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
         }
 
         p.subtitle {
-            color: #4b5563;
-            margin-top: 0;
+            color: #cbd5e1;
+            margin-top: 5px;
             margin-bottom: 20px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
-            background: #fee2e2;
+            background: #334155;
             display: inline-block;
             padding: 8px 16px;
             border-radius: 8px;
@@ -61,35 +62,38 @@
         .stats {
             display: flex;
             justify-content: space-around;
+            align-items: center;
             margin-bottom: 15px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
-            background: #f8fafc;
+            background: #0f172a;
             padding: 12px;
             border-radius: 10px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #475569;
         }
 
-        #day-counter { color: #ef4444; font-size: 24px; }
-        #score-display { color: #3b82f6; font-size: 24px;}
+        #day-counter { color: #f87171; font-size: 22px; }
+        #score-display { color: #60a5fa; font-size: 22px;}
+        #map-seed { color: #fbbf24; font-size: 16px; }
 
         #gameCanvas {
-            background-color: #86efac;
+            background-color: #064e3b;
             background-image: 
-                radial-gradient(#4ade80 15%, transparent 16%), 
-                radial-gradient(#4ade80 15%, transparent 16%);
+                radial-gradient(#059669 10%, transparent 11%), 
+                radial-gradient(#059669 10%, transparent 11%);
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
             border-radius: 12px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.15), 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
             outline: none;
             display: block;
             margin: 0 auto;
             touch-action: none;
+            border: 3px solid #022c22;
         }
 
         #gameCanvas:focus {
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.15), 0 0 0 4px rgba(239, 68, 68, 0.4);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 0 4px rgba(239, 68, 68, 0.6);
         }
 
         .mobile-dpad {
@@ -112,27 +116,28 @@
             height: 65px;
             border-radius: 15px;
             font-size: 32px;
-            background: #f1f5f9;
-            border: 3px solid #cbd5e1;
-            box-shadow: 0 5px #94a3b8;
+            background: #334155;
+            border: 3px solid #475569;
+            color: white;
+            box-shadow: 0 5px #0f172a;
             touch-action: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.1s;
+            transition: all 0.1s;
         }
         
         .dpad-btn:active, .dpad-btn.active {
-            background: #cbd5e1;
+            background: #475569;
             transform: translateY(5px);
-            box-shadow: 0 0 #94a3b8;
+            box-shadow: 0 0 #0f172a;
         }
 
         @media (max-width: 800px) {
-            h1 { font-size: 24px; }
-            p.subtitle { font-size: 13px; padding: 8px; line-height: 1.4; }
-            .stats { font-size: 16px; margin-bottom: 10px; padding: 10px; }
+            h1 { font-size: 22px; }
+            p.subtitle { font-size: 13px; padding: 6px; }
+            .stats { font-size: 14px; margin-bottom: 10px; padding: 8px; flex-wrap: wrap; }
             #gameCanvas {
                 width: 100%;
                 max-width: 800px;
@@ -146,7 +151,7 @@
         .game-over-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -157,16 +162,17 @@
         }
 
         .game-over-modal {
-            background: white;
+            background: #1e293b;
             padding: 30px;
             border-radius: 20px;
             text-align: center;
-            box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 2px #f87171;
             transform: scale(0.9);
             transition: all 0.3s ease;
             max-width: 400px;
             width: 90%;
             pointer-events: auto;
+            color: white;
         }
 
         .game-over-overlay.active {
@@ -179,8 +185,8 @@
         }
 
         .modal-title { font-size: 26px; margin-bottom: 10px; color: var(--primary-color); }
-        .modal-desc { font-size: 16px; color: #4b5563; line-height: 1.5; word-break: keep-all;}
-        .modal-score { font-size: 50px; font-weight: 900; color: var(--accent-color); margin: 15px 0; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .modal-desc { font-size: 16px; color: #cbd5e1; line-height: 1.5; word-break: keep-all;}
+        .modal-score { font-size: 50px; font-weight: 900; color: var(--accent-color); margin: 15px 0; text-shadow: 0 0 15px rgba(245,158,11,0.5); }
         
         .btn {
             background-color: var(--primary-color);
@@ -192,22 +198,23 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
         }
-        .btn:hover { background-color: #14532d; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        .btn:active { transform: translateY(0); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn:hover { background-color: #b91c1c; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6); }
+        .btn:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(220, 38, 38, 0.4); }
 
     </style>
 </head>
 <body>
 
     <div class="game-wrapper">
-        <h1>🐺 늑구 포획: 지옥 난이도 🔥</h1>
-        <p class="subtitle">계곡과 바위 장애물을 요리조리 피해다니는 늑구를 포획하세요!</p>
+        <h1>🐺 [레이드 보스] 각성 늑구 🩸</h1>
+        <p class="subtitle">사육사보다 1.5배 빠르며 엄청난 미로속에서 '분신술' 을 씁니다. 무조건 가둬야 잡힙니다!</p>
 
         <div class="stats">
-            <div>소요 일수: <span id="day-counter">1</span>일</div>
-            <div>예상 점수: <span id="score-display">100</span>점</div>
+            <div>미로: <span id="map-seed">생성중...</span></div>
+            <div>일수: <span id="day-counter">1</span>초</div>
+            <div>점수: <span id="score-display">100</span>점</div>
         </div>
 
         <canvas id="gameCanvas" width="800" height="450" tabindex="0"></canvas>
@@ -226,8 +233,8 @@
 
     <div class="game-over-overlay" id="game-over">
         <div class="game-over-modal">
-            <h2 class="modal-title" id="modal-title">늑구를 포획했습니다!</h2>
-            <p class="modal-desc" id="modal-desc">무사히 오월드로 돌아갔습니다.</p>
+            <h2 class="modal-title" id="modal-title">전설의 늑구를 잡았습니다!</h2>
+            <p class="modal-desc" id="modal-desc">축하합니다! 당신은 진정한 AI 마스터입니다.</p>
             <div class="modal-score" id="final-score">100점</div>
             <button class="btn" onclick="resetGame()">다시 도전하기</button>
         </div>
@@ -238,9 +245,9 @@
         const ctx = canvas.getContext('2d');
         const dayCounterEl = document.getElementById('day-counter');
         const scoreDisplayEl = document.getElementById('score-display');
+        const mapSeedEl = document.getElementById('map-seed');
         
-        // Game Constants
-        const TARGET_DAYS = 9;   // 9초 이내 100점
+        const TARGET_DAYS = 9;   
         const INITIAL_SCORE = 100;
         const PENALTY = 10;
 
@@ -253,19 +260,21 @@
         let lastTime = 0;
         let animReq;
 
-        // Entities: 플레이어 약간 상향, 늑구는 인공지능이 극도로 향상됨
+        // 레이드 보스 기믹 변수
+        // 사육사는 290으로 너프, 늑구는 420으로 압도적 스피드 우위
         let player = { x: 100, y: 225, size: 45, speed: 290 };
-        let nukgu = { x: 700, y: 225, size: 40, runSpeed: 275, walkSpeed: 100, dx: 0, dy: 0, currentSpeed: 0 };
+        let nukgu = { x: 700, y: 225, size: 36, baseSpeed: 420, dx: 0, dy: 0 };
         let animState = { truckX: -150, truckY: 225 };
+        
         let obstacles = [];
-        let aiTimer = 0;
+        let clones = [];
+        let particles = [];
+        let cloneCooldown = 0;
 
         // Input
         canvas.addEventListener('keydown', e => {
             keys[e.key] = true;
-            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-                e.preventDefault();
-            }
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) e.preventDefault();
         });
         canvas.addEventListener('keyup', e => { keys[e.key] = false; });
         canvas.addEventListener('click', () => canvas.focus());
@@ -301,6 +310,44 @@
         bindDpad('btn-left', 'ArrowLeft');
         bindDpad('btn-right', 'ArrowRight');
 
+        function generateMap() {
+            obstacles = [];
+            // 어마어마한 양의 장애물로 초고난도 미로 생성
+            let numRocks = 15 + Math.floor(Math.random() * 10);
+            let numTrees = 12 + Math.floor(Math.random() * 8);
+            let numWaters = 8 + Math.floor(Math.random() * 6);
+            
+            mapSeedEl.textContent = '극악 미로 ' + Math.floor(Math.random() * 9999);
+
+            function isValid(x, y, size) {
+                if (Math.hypot(x - player.x, y - player.y) < 220) return false; 
+                if (Math.hypot(x - nukgu.x, y - nukgu.y) < 220) return false;   
+                for (let o of obstacles) {
+                    if (Math.hypot(x - o.x, y - o.y) < (size + o.size) * 0.8) return false; 
+                }
+                return true;
+            }
+
+            let types = [
+                {emoji: '🪨', count: numRocks, size: 50},
+                {emoji: '🌲', count: numTrees, size: 60},
+                {emoji: '🌊', count: numWaters, size: 55}
+            ];
+
+            for (let t of types) {
+                let spawned = 0;
+                let attempts = 0;
+                while(spawned < t.count && attempts < 250) {
+                    let rx = 50 + Math.random() * (canvas.width - 100);
+                    let ry = 50 + Math.random() * (canvas.height - 100);
+                    if (isValid(rx, ry, t.size)) {
+                        obstacles.push({x: rx, y: ry, emoji: t.emoji, size: t.size});
+                        spawned++;
+                    }
+                    attempts++;
+                }
+            }
+        }
 
         function resetGame() {
             isGameOver = false;
@@ -309,36 +356,16 @@
             currentDay = 1;
             keys = {};
             touchTarget = null;
+            
+            clones = [];
+            particles = [];
+            cloneCooldown = 0;
 
             player.x = 80; player.y = canvas.height/2;
             nukgu.x = canvas.width - 80; nukgu.y = canvas.height/2;
             nukgu.dx = 0; nukgu.dy = 0;
             
-            // 🔥 장애물 맵 디자인 배치 (물리 충돌 적용됨)
-            obstacles = [
-                // 가운데 계곡 방어선 (위아래로만 지나갈 수 있음)
-                {x: 400, y: 30, emoji: '🌊', size: 60},
-                {x: 400, y: 90, emoji: '🌊', size: 60},
-                {x: 400, y: 150, emoji: '🌊', size: 60},
-                {x: 400, y: 210, emoji: '🌊', size: 60},
-                {x: 400, y: 270, emoji: '🌊', size: 60},
-                
-                // 골목을 형성하는 바위들
-                {x: 200, y: 150, emoji: '🪨', size: 55},
-                {x: 250, y: 100, emoji: '🪨', size: 55},
-                {x: 600, y: 300, emoji: '🪨', size: 55},
-                {x: 650, y: 250, emoji: '🪨', size: 55},
-                {x: 580, y: 360, emoji: '🪨', size: 55},
-                {x: 100, y: 350, emoji: '🪨', size: 55},
-                {x: 150, y: 400, emoji: '🪨', size: 55},
-                {x: 680, y: 100, emoji: '🪨', size: 55},
-                
-                // 나무들
-                {x: 300, y: 350, emoji: '🌲', size: 65},
-                {x: 500, y: 120, emoji: '🌲', size: 65},
-                {x: 550, y: 170, emoji: '🌲', size: 65},
-                {x: 350, y: 400, emoji: '🌲', size: 65},
-            ];
+            generateMap();
 
             document.getElementById('game-over').classList.remove('active');
             lastTime = performance.now();
@@ -356,23 +383,20 @@
             ctx.font = size + 'px "Segoe UI Emoji", "Apple Color Emoji", Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = "rgba(0,0,0,0.3)";
-            ctx.shadowBlur = 6;
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 8;
             ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 4;
+            ctx.shadowOffsetY = 5;
             ctx.fillText(emoji, x, y);
             ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
         }
 
-        // 물리 충돌 막기 (장애물을 뚫지 못하게 밖으로 밀어냄)
         function solveCollision(entity) {
             for (let obs of obstacles) {
                 let dx = entity.x - obs.x;
                 let dy = entity.y - obs.y;
                 let dist = Math.hypot(dx, dy);
-                let minDist = (entity.size + obs.size) / 2 * 0.7; // 충돌 범위 너그럽게 조정
+                let minDist = (entity.size + obs.size) / 2 * 0.75;
                 if (dist < minDist && dist > 0) {
                     let overlap = minDist - dist;
                     entity.x += (dx / dist) * overlap;
@@ -389,7 +413,7 @@
             dayCounterEl.textContent = currentDay;
             scoreDisplayEl.textContent = calculateScore();
 
-            // 1. 플레이어 이동 처리
+            // 1. 플레이어 이동
             let px = 0, py = 0;
             if (keys['ArrowUp'] || keys['w'] || keys['W']) py -= 1;
             if (keys['ArrowDown'] || keys['s'] || keys['S']) py += 1;
@@ -399,88 +423,160 @@
             if (px !== 0 && py !== 0) { 
                 let length = Math.sqrt(px*px + py*py);
                 px /= length; py /= length;
-            }
-
-            if (px === 0 && py === 0 && touchTarget) {
+            } else if (touchTarget) {
                 let dx = touchTarget.x - player.x;
                 let dy = touchTarget.y - player.y;
                 let t_dist = Math.hypot(dx, dy);
-                if (t_dist > 15) { 
-                    px = dx / t_dist;
-                    py = dy / t_dist;
-                }
+                if (t_dist > 15) { px = dx / t_dist; py = dy / t_dist; }
             }
 
             player.x += px * player.speed * dt;
             player.y += py * player.speed * dt;
             player.x = Math.max(player.size/2, Math.min(canvas.width - player.size/2, player.x));
             player.y = Math.max(player.size/2, Math.min(canvas.height - player.size/2, player.y));
-            solveCollision(player); // 플레이어도 바위를 못 뚫음
+            solveCollision(player);
 
-            // 2. 극악 난이도 늑구 AI (장애물을 부드럽게 피해가는 Boids 회피 로직)
-            aiTimer += dt;
+            // ==========================================
+            // 2. 늑구 (Wall-Surf 및 분신술 레이드 보스 패턴)
+            // ==========================================
             let dist = Math.hypot(player.x - nukgu.x, player.y - nukgu.y);
+            
+            // [패턴 1] 닌자 분신술 (그림자 분신)
+            cloneCooldown -= dt;
+            if (dist < 140 && cloneCooldown <= 0) {
+                cloneCooldown = 4.5; // 4.5초마다 발동
+                particles.push({x: nukgu.x, y: nukgu.y, text: '💨', life: 0.8, size: 60});
+                
+                // 본체도 순간이동 후 위치 속이기
+                nukgu.x += (Math.random()-0.5)*50;
+                nukgu.y += (Math.random()-0.5)*50;
 
-            if (aiTimer > 0.05) { // 엄청난 판단 속도
-                aiTimer = 0;
-                if (dist < 380) { // 멀리서부터 회피 시작
-                    // (A) 도망 벡터
-                    let evX = nukgu.x - player.x;
-                    let evY = nukgu.y - player.y;
-                    let evLen = Math.hypot(evX, evY);
-                    evX /= evLen; evY /= evLen;
+                // 똑같이 생긴 가짜 3마리 소환
+                for(let i=0; i<3; i++) {
+                    clones.push({
+                        x: nukgu.x, y: nukgu.y, size: nukgu.size,
+                        dx: (Math.random()-0.5)*2,
+                        dy: (Math.random()-0.5)*2,
+                        speed: nukgu.baseSpeed * 0.95,
+                        life: 3.0
+                    });
+                }
+            }
 
-                    // (B) 장애물 우회 벡터
-                    let avX = 0, avY = 0;
+            // [패턴 2] 분신 로직 처리
+            for (let i = clones.length - 1; i >= 0; i--) {
+                let c = clones[i];
+                c.life -= dt;
+                if (c.life <= 0) {
+                    particles.push({x: c.x, y: c.y, text: '💨', life: 0.4, size: 30});
+                    clones.splice(i, 1);
+                    continue;
+                }
+                
+                // 분신은 무작위로 계속 달림
+                c.dx += (Math.random() - 0.5) * 0.5;
+                c.dy += (Math.random() - 0.5) * 0.5;
+                let cLen = Math.hypot(c.dx, c.dy);
+                c.dx /= cLen; c.dy /= cLen;
+
+                c.x += c.dx * c.speed * dt;
+                c.y += c.dy * c.speed * dt;
+                
+                c.x = Math.max(c.size/2, Math.min(canvas.width - c.size/2, c.x));
+                c.y = Math.max(c.size/2, Math.min(canvas.height - c.size/2, c.y));
+                solveCollision(c);
+
+                // 가짜를 터치하면 펑! 사라짐
+                let cDist = Math.hypot(player.x - c.x, player.y - c.y);
+                if (cDist < (player.size + c.size)/2 * 0.6) {
+                    particles.push({x: c.x, y: c.y, text: '❌', life: 0.5, size: 45});
+                    clones.splice(i, 1);
+                }
+            }
+
+            // 파티클 처리
+            for(let i=particles.length-1; i>=0; i--) {
+                particles[i].life -= dt;
+                if(particles[i].life <= 0) particles.splice(i, 1);
+            }
+
+            // [패턴 3] 완벽한 장애물 서핑 회피기동
+            let evX = nukgu.x - player.x;
+            let evY = nukgu.y - player.y;
+            let evLen = Math.hypot(evX, evY);
+            if(evLen > 0) { evX /= evLen; evY /= evLen; }
+
+            let avX = 0, avY = 0;
+            for (let obs of obstacles) {
+                let ox = nukgu.x - obs.x;
+                let oy = nukgu.y - obs.y;
+                let odist = Math.hypot(ox, oy);
+                if (odist < 220) {  // 장애물 감지를 매우 넓게
+                    avX += ox / Math.pow(odist, 2);
+                    avY += oy / Math.pow(odist, 2);
+                }
+            }
+            
+            let wallMargin = 120; // 벽 감지도 넓게
+            if (nukgu.x < wallMargin) avX += 1 / Math.pow(Math.max(1, nukgu.x), 2);
+            if (nukgu.x > canvas.width - wallMargin) avX -= 1 / Math.pow(Math.max(1, canvas.width - nukgu.x), 2);
+            if (nukgu.y < wallMargin) avY += 1 / Math.pow(Math.max(1, nukgu.y), 2);
+            if (nukgu.y > canvas.height - wallMargin) avY -= 1 / Math.pow(Math.max(1, canvas.height - nukgu.y), 2);
+
+            let finalX = evX + avX * 6.0;
+            let finalY = evY + avY * 6.0;
+
+            // 벽타기 로직 (Wall-Hugging)
+            // 코너에 몰려 앞이 막혀 있으면 직각으로 미끄러져 빠져나옵니다.
+            if (dist < 300) { 
+                let nextX = nukgu.x + evX * 30;
+                let nextY = nukgu.y + evY * 30;
+                let blocked = false;
+                
+                if (nextX < 80 || nextX > canvas.width - 80 || nextY < 80 || nextY > canvas.height - 80) blocked = true;
+                if (!blocked) {
                     for (let obs of obstacles) {
-                        let ox = nukgu.x - obs.x;
-                        let oy = nukgu.y - obs.y;
-                        let odist = Math.hypot(ox, oy);
-                        if (odist < 140) { // 장애물이 가까우면 강력하게 회피
-                            avX += ox / Math.pow(odist, 2);
-                            avY += oy / Math.pow(odist, 2);
+                        if (Math.hypot(nextX - obs.x, nextY - obs.y) < (nukgu.size + obs.size) * 0.9) {
+                            blocked = true; break;
                         }
                     }
-                    
-                    // (C) 캔버스 벽 회피 벡터
-                    if (nukgu.x < 120) avX += 1 / Math.pow(Math.max(1, nukgu.x), 2);
-                    if (nukgu.x > canvas.width - 120) avX -= 1 / Math.pow(Math.max(1, canvas.width - nukgu.x), 2);
-                    if (nukgu.y < 120) avY += 1 / Math.pow(Math.max(1, nukgu.y), 2);
-                    if (nukgu.y > canvas.height - 120) avY -= 1 / Math.pow(Math.max(1, canvas.height - nukgu.y), 2);
-
-                    let avLen = Math.hypot(avX, avY);
-                    if (avLen > 0) { avX /= avLen; avY /= avLen; }
-
-                    // 도망 방향에 장애물 회피 방향을 섞어 코너를 스무스하게 빠져나감! (극악무도)
-                    let finalX = evX + avX * 2.5; 
-                    let finalY = evY + avY * 2.5;
-                    let finalLen = Math.hypot(finalX, finalY);
-
-                    nukgu.dx = finalX / finalLen;
-                    nukgu.dy = finalY / finalLen;
-                    nukgu.currentSpeed = nukgu.runSpeed;
-                } else {
-                    if (Math.random() < 0.2) {
-                        let angle = Math.random() * Math.PI * 2;
-                        nukgu.dx = Math.cos(angle);
-                        nukgu.dy = Math.sin(angle);
-                        nukgu.currentSpeed = nukgu.walkSpeed;
-                    } else if (Math.random() < 0.1) {
-                        nukgu.dx = 0; nukgu.dy = 0;
+                }
+                
+                if (blocked) {
+                    // 직각 회피
+                    let o1X = -evY, o1Y = evX;
+                    let o2X = evY, o2Y = -evX;
+                    if ((o1X * avX + o1Y * avY) > (o2X * avX + o2Y * avY)) {
+                        finalX = o1X; finalY = o1Y;
+                    } else {
+                        finalX = o2X; finalY = o2Y;
                     }
                 }
             }
 
-            nukgu.x += nukgu.dx * nukgu.currentSpeed * dt;
-            nukgu.y += nukgu.dy * nukgu.currentSpeed * dt;
+            // 무빙 속임수(노이즈)
+            finalX += (Math.random() - 0.5) * 1.5;
+            finalY += (Math.random() - 0.5) * 1.5;
+
+            // 회전 딜레이 0초. 언제든 즉시 풀스피드로 회피
+            let fLen = Math.hypot(finalX, finalY);
+            if(fLen > 0) {
+                nukgu.dx = finalX / fLen;
+                nukgu.dy = finalY / fLen;
+            }
+
+            nukgu.x += nukgu.dx * nukgu.baseSpeed * dt;
+            nukgu.y += nukgu.dy * nukgu.baseSpeed * dt;
+
+            // 물리 제약으로 화면 이탈 방지
             nukgu.x = Math.max(nukgu.size/2, Math.min(canvas.width - nukgu.size/2, nukgu.x));
             nukgu.y = Math.max(nukgu.size/2, Math.min(canvas.height - nukgu.size/2, nukgu.y));
-            solveCollision(nukgu); // 물리적으로도 막힘
+            solveCollision(nukgu); 
             nukgu.x = Math.max(nukgu.size/2, Math.min(canvas.width - nukgu.size/2, nukgu.x));
             nukgu.y = Math.max(nukgu.size/2, Math.min(canvas.height - nukgu.size/2, nukgu.y));
 
-            // 포획 판정
-            if (dist < (player.size + nukgu.size)/2 * 0.8) { 
+            // 포획 판정 (히트박스 0.35로 극단적으로 작음. 정확히 본체를 밟아야 함)
+            if (dist < (player.size + nukgu.size)/2 * 0.35) { 
                 triggerGameOver();
             }
         }
@@ -493,16 +589,16 @@
         }
 
         function drawTruckAnim(dt) {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            let textSize = canvas.width < 500 ? 24 : 36;
+            let textSize = canvas.width < 500 ? 20 : 32;
             ctx.font = `bold ${textSize}px "Segoe UI", sans-serif`;
             ctx.fillStyle = '#fff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 10; ctx.shadowColor = 'black';
-            ctx.fillText('🚨 드디어 늑구를 잡았습니다! 오월드 압송 중 🚨', canvas.width/2, canvas.height/3);
+            ctx.shadowBlur = 15; ctx.shadowColor = '#dc2626';
+            ctx.fillText('🚨 전설의 대 괴수 늑구를 생포했습니다! 압송 중! 🚨', canvas.width/2, canvas.height/3);
             ctx.shadowBlur = 0; 
             
             animState.truckX += 350 * dt; 
@@ -523,11 +619,11 @@
             finalScore.textContent = calculateScore() + "점";
             
             if (currentDay <= TARGET_DAYS) {
-                title.textContent = "지옥모드 클리어! 🏆";
-                desc.textContent = `진짜로 잡을 줄은 몰랐습니다! ${currentDay}일 만에 교활한 늑구를 잡아냈네요.`;
+                title.textContent = "가히 전설의 사육사! 🏆";
+                desc.textContent = `이 불가능한 보스전을 ${currentDay}일 만에 깨다니! 당신은 AI를 상대로 압승을 거뒀습니다!`;
             } else {
-                title.textContent = "포획 완료 💦";
-                desc.textContent = `포기하지 않은 끈기에 박수를 보냅니다. ${currentDay}일이나 걸렸네요!`;
+                title.textContent = "보스 레이드 성공 💦";
+                desc.textContent = `정말 끔찍한 난이도였죠? 인간 승리입니다. ${currentDay}일이 걸렸습니다!`;
             }
             
             document.getElementById('game-over').classList.add('active');
@@ -535,14 +631,24 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             let renderables = [
                 { type: 'nukgu', x: nukgu.x, y: nukgu.y, emoji: '🐺', size: nukgu.size },
                 { type: 'player', x: player.x, y: player.y, emoji: '🤠', size: player.size }
             ];
             obstacles.forEach(o => renderables.push({ type: 'obstacle', x: o.x, y: o.y, emoji: o.emoji, size: o.size }));
+            // 본체와 똑같은 크기와 모양을 한 분신
+            clones.forEach(c => renderables.push({ type: 'clone', x: c.x, y: c.y, emoji: '🐺', size: c.size }));
 
-            renderables.sort((a,b) => a.y - b.y); // Y축 정렬로 입체감 부여
+            renderables.sort((a,b) => a.y - b.y); 
             renderables.forEach(r => renderEmoji(r.emoji, r.x, r.y, r.size));
+
+            // 파티클 (맨 위에 그려짐)
+            particles.forEach(p => {
+               ctx.globalAlpha = p.life > 0.5 ? 1.0 : p.life * 2;
+               renderEmoji(p.text, p.x, p.y, p.size);
+               ctx.globalAlpha = 1.0;
+            });
         }
 
         function gameLoop(currentTime) {
