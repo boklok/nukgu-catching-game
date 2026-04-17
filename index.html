@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>대전 오월드 늑구 잡기 - 마지막 시련 (레이드 보스)</title>
+    <title>대전 오월드 늑구 잡기 - 절망편 (200% 난이도)</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --primary-color: #dc2626;
-            --secondary-color: #ef4444;
-            --accent-color: #f59e0b;
+            --bg-color: #000000;
+            --primary-color: #991b1b;
+            --secondary-color: #b91c1c;
+            --accent-color: #fca5a5;
             --text-color: #f8fafc;
         }
 
@@ -28,10 +28,10 @@
         }
 
         .game-wrapper {
-            background: #1e293b;
+            background: #111827;
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 0 2px #334155;
+            box-shadow: 0 10px 50px rgba(153, 27, 27, 0.3), inset 0 0 0 2px #374151;
             text-align: center;
             max-width: 850px;
             width: 100%;
@@ -39,24 +39,25 @@
         }
 
         h1 {
-            color: #f87171; 
+            color: #fca5a5; 
             margin-bottom: 5px;
             font-size: 32px;
             font-weight: 900;
-            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+            text-shadow: 0 0 15px rgba(220, 38, 38, 0.8);
         }
 
         p.subtitle {
-            color: #cbd5e1;
+            color: #d1d5db;
             margin-top: 5px;
             margin-bottom: 20px;
             font-size: 15px;
             font-weight: bold;
-            background: #334155;
+            background: #1f2937;
             display: inline-block;
             padding: 8px 16px;
             border-radius: 8px;
             word-break: keep-all;
+            border: 1px solid #4b5563;
         }
 
         .stats {
@@ -66,25 +67,26 @@
             margin-bottom: 15px;
             font-size: 18px;
             font-weight: bold;
-            background: #0f172a;
+            background: #000;
             padding: 12px;
             border-radius: 10px;
-            border: 2px solid #475569;
+            border: 2px solid #374151;
+            box-shadow: inset 0 0 10px rgba(220,38,38,0.2);
         }
 
         #day-counter { color: #f87171; font-size: 22px; }
-        #score-display { color: #60a5fa; font-size: 22px;}
-        #map-seed { color: #fbbf24; font-size: 16px; }
+        #score-display { color: #93c5fd; font-size: 22px;}
+        #map-seed { color: #fcd34d; font-size: 16px; }
 
         #gameCanvas {
             background-color: #064e3b;
             background-image: 
-                radial-gradient(#059669 10%, transparent 11%), 
-                radial-gradient(#059669 10%, transparent 11%);
+                radial-gradient(#059669 15%, transparent 16%), 
+                radial-gradient(#059669 15%, transparent 16%);
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
             border-radius: 12px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5);
             outline: none;
             display: block;
             margin: 0 auto;
@@ -93,50 +95,45 @@
         }
 
         #gameCanvas:focus {
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 0 4px rgba(239, 68, 68, 0.6);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 0 4px rgba(239, 68, 68, 0.8);
         }
 
-        .mobile-dpad {
+        /* 🕹️ 가상 조이스틱 스타일 */
+        .joystick-container {
             display: none;
-            flex-direction: column;
-            align-items: center;
+            width: 100%;
+            height: 160px;
+            position: relative;
             margin-top: 15px;
-            user-select: none;
-        }
-
-        .dpad-row {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 8px;
-        }
-
-        .dpad-btn {
-            width: 65px;
-            height: 65px;
-            border-radius: 15px;
-            font-size: 32px;
-            background: #334155;
-            border: 3px solid #475569;
-            color: white;
-            box-shadow: 0 5px #0f172a;
             touch-action: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.1s;
         }
-        
-        .dpad-btn:active, .dpad-btn.active {
-            background: #475569;
-            transform: translateY(5px);
-            box-shadow: 0 0 #0f172a;
+
+        #joystick-zone {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            background: rgba(31, 41, 55, 0.8);
+            border: 4px solid rgba(156, 163, 175, 0.3);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        #joystick-knob {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 65px; height: 65px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ef4444, #7f1d1d);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.9), inset 0 -3px 5px rgba(0,0,0,0.4);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            /* 자바스크립트에서 리셋할때 애니메이션 적용됨 */
         }
 
         @media (max-width: 800px) {
-            h1 { font-size: 22px; }
-            p.subtitle { font-size: 13px; padding: 6px; }
+            h1 { font-size: 24px; }
+            p.subtitle { font-size: 12px; padding: 6px; }
             .stats { font-size: 14px; margin-bottom: 10px; padding: 8px; flex-wrap: wrap; }
             #gameCanvas {
                 width: 100%;
@@ -144,14 +141,14 @@
                 height: auto;
                 aspect-ratio: 16 / 9;
             }
-            .mobile-dpad { display: flex; }
+            .joystick-container { display: flex; justify-content: center; align-items: center; }
             .game-wrapper { padding: 12px; }
         }
 
         .game-over-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -162,11 +159,11 @@
         }
 
         .game-over-modal {
-            background: #1e293b;
+            background: #111827;
             padding: 30px;
             border-radius: 20px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 2px #f87171;
+            box-shadow: 0 20px 60px rgba(220,38,38,0.5), 0 0 0 2px #dc2626;
             transform: scale(0.9);
             transition: all 0.3s ease;
             max-width: 400px;
@@ -184,14 +181,14 @@
             transform: scale(1);
         }
 
-        .modal-title { font-size: 26px; margin-bottom: 10px; color: var(--primary-color); }
-        .modal-desc { font-size: 16px; color: #cbd5e1; line-height: 1.5; word-break: keep-all;}
-        .modal-score { font-size: 50px; font-weight: 900; color: var(--accent-color); margin: 15px 0; text-shadow: 0 0 15px rgba(245,158,11,0.5); }
+        .modal-title { font-size: 26px; margin-bottom: 10px; color: var(--accent-color); }
+        .modal-desc { font-size: 16px; color: #9ca3af; line-height: 1.5; word-break: keep-all;}
+        .modal-score { font-size: 50px; font-weight: 900; color: #fbbf24; margin: 15px 0; text-shadow: 0 0 20px rgba(245,158,11,0.6); }
         
         .btn {
             background-color: var(--primary-color);
             color: white;
-            border: none;
+            border: 1px solid #f87171;
             padding: 14px 28px;
             font-size: 18px;
             font-weight: bold;
@@ -208,33 +205,29 @@
 <body>
 
     <div class="game-wrapper">
-        <h1>🐺 [레이드 보스] 각성 늑구 🩸</h1>
-        <p class="subtitle">사육사보다 1.5배 빠르며 엄청난 미로속에서 '분신술' 을 씁니다. 무조건 가둬야 잡힙니다!</p>
+        <h1>🐺 [절망편] 한계돌파 늑구 🩸</h1>
+        <p class="subtitle">난이도 200% 증가! 투명화(은신) & 분신 5마리! 화면 가득한 지옥의 미로!</p>
 
         <div class="stats">
             <div>미로: <span id="map-seed">생성중...</span></div>
-            <div>일수: <span id="day-counter">1</span>초</div>
+            <div>시간: <span id="day-counter">1</span>초</div>
             <div>점수: <span id="score-display">100</span>점</div>
         </div>
 
         <canvas id="gameCanvas" width="800" height="450" tabindex="0"></canvas>
 
-        <div class="mobile-dpad">
-            <div class="dpad-row">
-                <button class="dpad-btn" id="btn-up">⬆️</button>
-            </div>
-            <div class="dpad-row">
-                <button class="dpad-btn" id="btn-left">⬅️</button>
-                <button class="dpad-btn" id="btn-down">⬇️</button>
-                <button class="dpad-btn" id="btn-right">➡️</button>
+        <!-- 🕹️ 모바일 전용 가상 조이스틱 -->
+        <div class="joystick-container">
+            <div id="joystick-zone">
+                <div id="joystick-knob"></div>
             </div>
         </div>
     </div>
 
     <div class="game-over-overlay" id="game-over">
         <div class="game-over-modal">
-            <h2 class="modal-title" id="modal-title">전설의 늑구를 잡았습니다!</h2>
-            <p class="modal-desc" id="modal-desc">축하합니다! 당신은 진정한 AI 마스터입니다.</p>
+            <h2 class="modal-title" id="modal-title">세계 최고의 사육사!</h2>
+            <p class="modal-desc" id="modal-desc">이 극악무도한 인공지능을 뚫다니 경이롭습니다.</p>
             <div class="modal-score" id="final-score">100점</div>
             <button class="btn" onclick="resetGame()">다시 도전하기</button>
         </div>
@@ -252,7 +245,6 @@
         const PENALTY = 10;
 
         let keys = {};
-        let touchTarget = null;
         let gameTime = 0; 
         let currentDay = 1;
         let isGameOver = false;
@@ -260,10 +252,9 @@
         let lastTime = 0;
         let animReq;
 
-        // 레이드 보스 기믹 변수
-        // 사육사는 290으로 너프, 늑구는 420으로 압도적 스피드 우위
-        let player = { x: 100, y: 225, size: 45, speed: 290 };
-        let nukgu = { x: 700, y: 225, size: 36, baseSpeed: 420, dx: 0, dy: 0 };
+        // 💀 절망 모드: 사육사는 극단적으로 느림(250), 늑구는 음속(520). 2배 이상의 스피드 차이.
+        let player = { x: 100, y: 225, size: 45, speed: 250 };
+        let nukgu = { x: 700, y: 225, size: 36, baseSpeed: 520, dx: 0, dy: 0, invisibleTimer: 0 };
         let animState = { truckX: -150, truckY: 225 };
         
         let obstacles = [];
@@ -271,7 +262,12 @@
         let particles = [];
         let cloneCooldown = 0;
 
-        // Input
+        // 조이스틱 변수
+        const stickZone = document.getElementById('joystick-zone');
+        const stickKnob = document.getElementById('joystick-knob');
+        let joyX = 0, joyY = 0;
+
+        // Keyboard Input
         canvas.addEventListener('keydown', e => {
             keys[e.key] = true;
             if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) e.preventDefault();
@@ -279,65 +275,84 @@
         canvas.addEventListener('keyup', e => { keys[e.key] = false; });
         canvas.addEventListener('click', () => canvas.focus());
 
-        function handleCanvasTouch(e) {
-            e.preventDefault();
-            if (!e.touches.length) return;
-            const MathScaleX = canvas.width / canvas.getBoundingClientRect().width;
-            const MathScaleY = canvas.height / canvas.getBoundingClientRect().height;
-            touchTarget = {
-                x: (e.touches[0].clientX - canvas.getBoundingClientRect().left) * MathScaleX,
-                y: (e.touches[0].clientY - canvas.getBoundingClientRect().top) * MathScaleY
-            };
-        }
-        canvas.addEventListener('touchstart', handleCanvasTouch, {passive: false});
-        canvas.addEventListener('touchmove', handleCanvasTouch, {passive: false});
-        canvas.addEventListener('touchend', (e) => { e.preventDefault(); touchTarget = null; }, {passive: false});
-        canvas.addEventListener('touchcancel', (e) => { e.preventDefault(); touchTarget = null; }, {passive: false});
+        // 🕹️ 가상 조이스틱 이벤트 리스너
+        if (stickZone) {
+            let stickActive = false;
+            let stickCenter = {x: 0, y: 0};
+            let maxDist = 40; 
 
-        function bindDpad(id, keyStr) {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            const down = (e) => { e.preventDefault(); keys[keyStr] = true; btn.classList.add('active'); };
-            const up = (e) => { e.preventDefault(); keys[keyStr] = false; btn.classList.remove('active'); };
-            btn.addEventListener('touchstart', down, {passive: false});
-            btn.addEventListener('touchend', up, {passive: false});
-            btn.addEventListener('mousedown', down);
-            btn.addEventListener('mouseup', up);
-            btn.addEventListener('mouseleave', up);
+            stickZone.addEventListener('touchstart', e => {
+                e.preventDefault();
+                stickActive = true;
+                let rect = stickZone.getBoundingClientRect();
+                stickCenter.x = rect.left + rect.width / 2;
+                stickCenter.y = rect.top + rect.height / 2;
+                updateStick(e.touches[0].clientX, e.touches[0].clientY);
+                stickKnob.style.transition = 'none'; // 드래그 중엔 즉각반응
+            }, {passive: false});
+
+            stickZone.addEventListener('touchmove', e => {
+                e.preventDefault();
+                if(!stickActive) return;
+                updateStick(e.touches[0].clientX, e.touches[0].clientY);
+            }, {passive: false});
+
+            const resetStick = (e) => {
+                if(e) e.preventDefault();
+                stickActive = false;
+                joyX = 0; joyY = 0;
+                stickKnob.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                stickKnob.style.transform = `translate(-50%, -50%)`;
+            };
+
+            stickZone.addEventListener('touchend', resetStick, {passive: false});
+            stickZone.addEventListener('touchcancel', resetStick, {passive: false});
+
+            function updateStick(cx, cy) {
+                let dx = cx - stickCenter.x;
+                let dy = cy - stickCenter.y;
+                let dist = Math.hypot(dx, dy);
+                
+                if (dist > maxDist) {
+                    dx = (dx / dist) * maxDist;
+                    dy = (dy / dist) * maxDist;
+                }
+                
+                stickKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+                joyX = dx / maxDist;
+                joyY = dy / maxDist;
+            }
         }
-        bindDpad('btn-up', 'ArrowUp');
-        bindDpad('btn-down', 'ArrowDown');
-        bindDpad('btn-left', 'ArrowLeft');
-        bindDpad('btn-right', 'ArrowRight');
 
         function generateMap() {
             obstacles = [];
-            // 어마어마한 양의 장애물로 초고난도 미로 생성
-            let numRocks = 15 + Math.floor(Math.random() * 10);
-            let numTrees = 12 + Math.floor(Math.random() * 8);
-            let numWaters = 8 + Math.floor(Math.random() * 6);
+            // 화면을 꽉 채우는 지옥의 빽빽한 미로 (장애물 2배 증가)
+            let numRocks = 20 + Math.floor(Math.random() * 8);
+            let numTrees = 15 + Math.floor(Math.random() * 6);
+            let numWaters = 10 + Math.floor(Math.random() * 5);
             
-            mapSeedEl.textContent = '극악 미로 ' + Math.floor(Math.random() * 9999);
+            mapSeedEl.textContent = '지옥 맵-' + Math.floor(Math.random() * 9999);
 
             function isValid(x, y, size) {
-                if (Math.hypot(x - player.x, y - player.y) < 220) return false; 
-                if (Math.hypot(x - nukgu.x, y - nukgu.y) < 220) return false;   
+                if (Math.hypot(x - player.x, y - player.y) < 200) return false; 
+                if (Math.hypot(x - nukgu.x, y - nukgu.y) < 200) return false;   
                 for (let o of obstacles) {
-                    if (Math.hypot(x - o.x, y - o.y) < (size + o.size) * 0.8) return false; 
+                    // 간격을 약간 줄여서 좁은 골목길을 유도함
+                    if (Math.hypot(x - o.x, y - o.y) < (size + o.size) * 0.75) return false; 
                 }
                 return true;
             }
 
             let types = [
-                {emoji: '🪨', count: numRocks, size: 50},
-                {emoji: '🌲', count: numTrees, size: 60},
-                {emoji: '🌊', count: numWaters, size: 55}
+                {emoji: '🪨', count: numRocks, size: 55},
+                {emoji: '🌲', count: numTrees, size: 65},
+                {emoji: '🌊', count: numWaters, size: 60}
             ];
 
             for (let t of types) {
                 let spawned = 0;
                 let attempts = 0;
-                while(spawned < t.count && attempts < 250) {
+                while(spawned < t.count && attempts < 300) {
                     let rx = 50 + Math.random() * (canvas.width - 100);
                     let ry = 50 + Math.random() * (canvas.height - 100);
                     if (isValid(rx, ry, t.size)) {
@@ -355,7 +370,12 @@
             gameTime = 0;
             currentDay = 1;
             keys = {};
-            touchTarget = null;
+            // 조이스틱 초기화
+            joyX = 0; joyY = 0;
+            if(stickKnob) {
+                stickKnob.style.transition = 'none';
+                stickKnob.style.transform = `translate(-50%, -50%)`;
+            }
             
             clones = [];
             particles = [];
@@ -364,6 +384,7 @@
             player.x = 80; player.y = canvas.height/2;
             nukgu.x = canvas.width - 80; nukgu.y = canvas.height/2;
             nukgu.dx = 0; nukgu.dy = 0;
+            nukgu.invisibleTimer = 0;
             
             generateMap();
 
@@ -383,10 +404,10 @@
             ctx.font = size + 'px "Segoe UI Emoji", "Apple Color Emoji", Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowColor = "rgba(0,0,0,0.6)";
             ctx.shadowBlur = 8;
             ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 5;
+            ctx.shadowOffsetY = 6;
             ctx.fillText(emoji, x, y);
             ctx.shadowBlur = 0;
         }
@@ -413,21 +434,20 @@
             dayCounterEl.textContent = currentDay;
             scoreDisplayEl.textContent = calculateScore();
 
-            // 1. 플레이어 이동
+            // 1. 플레이어 이동 (키보드 + 조이스틱 동시 지원)
             let px = 0, py = 0;
             if (keys['ArrowUp'] || keys['w'] || keys['W']) py -= 1;
             if (keys['ArrowDown'] || keys['s'] || keys['S']) py += 1;
             if (keys['ArrowLeft'] || keys['a'] || keys['A']) px -= 1;
             if (keys['ArrowRight'] || keys['d'] || keys['D']) px += 1;
 
-            if (px !== 0 && py !== 0) { 
-                let length = Math.sqrt(px*px + py*py);
+            if (px !== 0 || py !== 0) { 
+                let length = Math.hypot(px, py);
                 px /= length; py /= length;
-            } else if (touchTarget) {
-                let dx = touchTarget.x - player.x;
-                let dy = touchTarget.y - player.y;
-                let t_dist = Math.hypot(dx, dy);
-                if (t_dist > 15) { px = dx / t_dist; py = dy / t_dist; }
+            } else if (joyX !== 0 || joyY !== 0) {
+                // 조이스틱의 아날로그 값을 그대로 반영 (살살 밀면 천천히 걸어감)
+                px = joyX;
+                py = joyY;
             }
 
             player.x += px * player.speed * dt;
@@ -437,28 +457,33 @@
             solveCollision(player);
 
             // ==========================================
-            // 2. 늑구 (Wall-Surf 및 분신술 레이드 보스 패턴)
+            // 2. 절망 늑구 (Wall-Surf + 5연발 분신 + 투명화 은신)
             // ==========================================
+            if (nukgu.invisibleTimer > 0) nukgu.invisibleTimer -= dt;
+
             let dist = Math.hypot(player.x - nukgu.x, player.y - nukgu.y);
             
-            // [패턴 1] 닌자 분신술 (그림자 분신)
+            // [패턴 1] 초필살기: 5단 분신술 및 본체 은신!
             cloneCooldown -= dt;
-            if (dist < 140 && cloneCooldown <= 0) {
-                cloneCooldown = 4.5; // 4.5초마다 발동
-                particles.push({x: nukgu.x, y: nukgu.y, text: '💨', life: 0.8, size: 60});
+            if (dist < 150 && cloneCooldown <= 0) {
+                cloneCooldown = 3.2; // 3.2초마다 난사!! (쿨다운 대폭 감소)
+                particles.push({x: nukgu.x, y: nukgu.y, text: '💥', life: 0.8, size: 80}); // 펑!
                 
-                // 본체도 순간이동 후 위치 속이기
-                nukgu.x += (Math.random()-0.5)*50;
-                nukgu.y += (Math.random()-0.5)*50;
+                // 💡 최악의 난이도: 본체가 1.2초간 완전 투명화(은신) 상태 돌입
+                nukgu.invisibleTimer = 1.2;
 
-                // 똑같이 생긴 가짜 3마리 소환
-                for(let i=0; i<3; i++) {
+                // 본체는 약간 랜덤하게 워프시켜 플레이어의 추적을 끊음
+                nukgu.x += (Math.random()-0.5)*100;
+                nukgu.y += (Math.random()-0.5)*100;
+
+                // 무려 5마리의 가짜 늑구 폭발 소환
+                for(let i=0; i<5; i++) {
                     clones.push({
                         x: nukgu.x, y: nukgu.y, size: nukgu.size,
                         dx: (Math.random()-0.5)*2,
                         dy: (Math.random()-0.5)*2,
-                        speed: nukgu.baseSpeed * 0.95,
-                        life: 3.0
+                        speed: nukgu.baseSpeed * 0.9,
+                        life: 3.5
                     });
                 }
             }
@@ -473,9 +498,9 @@
                     continue;
                 }
                 
-                // 분신은 무작위로 계속 달림
-                c.dx += (Math.random() - 0.5) * 0.5;
-                c.dy += (Math.random() - 0.5) * 0.5;
+                // 분신은 사방으로 발광하며 뛰어다님
+                c.dx += (Math.random() - 0.5) * 1.5;
+                c.dy += (Math.random() - 0.5) * 1.5;
                 let cLen = Math.hypot(c.dx, c.dy);
                 c.dx /= cLen; c.dy /= cLen;
 
@@ -486,7 +511,6 @@
                 c.y = Math.max(c.size/2, Math.min(canvas.height - c.size/2, c.y));
                 solveCollision(c);
 
-                // 가짜를 터치하면 펑! 사라짐
                 let cDist = Math.hypot(player.x - c.x, player.y - c.y);
                 if (cDist < (player.size + c.size)/2 * 0.6) {
                     particles.push({x: c.x, y: c.y, text: '❌', life: 0.5, size: 45});
@@ -494,13 +518,12 @@
                 }
             }
 
-            // 파티클 처리
             for(let i=particles.length-1; i>=0; i--) {
                 particles[i].life -= dt;
                 if(particles[i].life <= 0) particles.splice(i, 1);
             }
 
-            // [패턴 3] 완벽한 장애물 서핑 회피기동
+            // [패턴 3] 장애물 서핑 로직 (음속의 벽타기)
             let evX = nukgu.x - player.x;
             let evY = nukgu.y - player.y;
             let evLen = Math.hypot(evX, evY);
@@ -511,24 +534,22 @@
                 let ox = nukgu.x - obs.x;
                 let oy = nukgu.y - obs.y;
                 let odist = Math.hypot(ox, oy);
-                if (odist < 220) {  // 장애물 감지를 매우 넓게
+                if (odist < 220) {  
                     avX += ox / Math.pow(odist, 2);
                     avY += oy / Math.pow(odist, 2);
                 }
             }
             
-            let wallMargin = 120; // 벽 감지도 넓게
+            let wallMargin = 120;
             if (nukgu.x < wallMargin) avX += 1 / Math.pow(Math.max(1, nukgu.x), 2);
             if (nukgu.x > canvas.width - wallMargin) avX -= 1 / Math.pow(Math.max(1, canvas.width - nukgu.x), 2);
             if (nukgu.y < wallMargin) avY += 1 / Math.pow(Math.max(1, nukgu.y), 2);
             if (nukgu.y > canvas.height - wallMargin) avY -= 1 / Math.pow(Math.max(1, canvas.height - nukgu.y), 2);
 
-            let finalX = evX + avX * 6.0;
-            let finalY = evY + avY * 6.0;
+            let finalX = evX + avX * 8.0; // 벽 회피 우선순위 극대화
+            let finalY = evY + avY * 8.0;
 
-            // 벽타기 로직 (Wall-Hugging)
-            // 코너에 몰려 앞이 막혀 있으면 직각으로 미끄러져 빠져나옵니다.
-            if (dist < 300) { 
+            if (dist < 350) { 
                 let nextX = nukgu.x + evX * 30;
                 let nextY = nukgu.y + evY * 30;
                 let blocked = false;
@@ -536,14 +557,13 @@
                 if (nextX < 80 || nextX > canvas.width - 80 || nextY < 80 || nextY > canvas.height - 80) blocked = true;
                 if (!blocked) {
                     for (let obs of obstacles) {
-                        if (Math.hypot(nextX - obs.x, nextY - obs.y) < (nukgu.size + obs.size) * 0.9) {
+                        if (Math.hypot(nextX - obs.x, nextY - obs.y) < (nukgu.size + obs.size) * 0.95) {
                             blocked = true; break;
                         }
                     }
                 }
                 
                 if (blocked) {
-                    // 직각 회피
                     let o1X = -evY, o1Y = evX;
                     let o2X = evY, o2Y = -evX;
                     if ((o1X * avX + o1Y * avY) > (o2X * avX + o2Y * avY)) {
@@ -554,11 +574,9 @@
                 }
             }
 
-            // 무빙 속임수(노이즈)
-            finalX += (Math.random() - 0.5) * 1.5;
-            finalY += (Math.random() - 0.5) * 1.5;
+            finalX += (Math.random() - 0.5) * 2.0;
+            finalY += (Math.random() - 0.5) * 2.0;
 
-            // 회전 딜레이 0초. 언제든 즉시 풀스피드로 회피
             let fLen = Math.hypot(finalX, finalY);
             if(fLen > 0) {
                 nukgu.dx = finalX / fLen;
@@ -568,15 +586,14 @@
             nukgu.x += nukgu.dx * nukgu.baseSpeed * dt;
             nukgu.y += nukgu.dy * nukgu.baseSpeed * dt;
 
-            // 물리 제약으로 화면 이탈 방지
             nukgu.x = Math.max(nukgu.size/2, Math.min(canvas.width - nukgu.size/2, nukgu.x));
             nukgu.y = Math.max(nukgu.size/2, Math.min(canvas.height - nukgu.size/2, nukgu.y));
             solveCollision(nukgu); 
             nukgu.x = Math.max(nukgu.size/2, Math.min(canvas.width - nukgu.size/2, nukgu.x));
             nukgu.y = Math.max(nukgu.size/2, Math.min(canvas.height - nukgu.size/2, nukgu.y));
 
-            // 포획 판정 (히트박스 0.35로 극단적으로 작음. 정확히 본체를 밟아야 함)
-            if (dist < (player.size + nukgu.size)/2 * 0.35) { 
+            // ⭐ 충돌(포획) 판정 - 극 악 모 드 (히트박스 0.25배로 대폭소형화)
+            if (dist < (player.size + nukgu.size)/2 * 0.25) { 
                 triggerGameOver();
             }
         }
@@ -589,16 +606,16 @@
         }
 
         function drawTruckAnim(dt) {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            let textSize = canvas.width < 500 ? 20 : 32;
+            let textSize = canvas.width < 500 ? 18 : 30;
             ctx.font = `bold ${textSize}px "Segoe UI", sans-serif`;
             ctx.fillStyle = '#fff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#dc2626';
-            ctx.fillText('🚨 전설의 대 괴수 늑구를 생포했습니다! 압송 중! 🚨', canvas.width/2, canvas.height/3);
+            ctx.shadowBlur = 20; ctx.shadowColor = '#fca5a5';
+            ctx.fillText('🚨 미쳤습니다! 절망의 늑구를 생태계 단위로 잡아냈습니다! 🚨', canvas.width/2, canvas.height/3);
             ctx.shadowBlur = 0; 
             
             animState.truckX += 350 * dt; 
@@ -619,11 +636,11 @@
             finalScore.textContent = calculateScore() + "점";
             
             if (currentDay <= TARGET_DAYS) {
-                title.textContent = "가히 전설의 사육사! 🏆";
-                desc.textContent = `이 불가능한 보스전을 ${currentDay}일 만에 깨다니! 당신은 AI를 상대로 압승을 거뒀습니다!`;
+                title.textContent = "진정한 신의 피지컬! 🏆";
+                desc.textContent = `이 투명화+5단분신 늑구를 ${currentDay}초 만에 포획하시다니, 인간의 한계를 초월했습니다! 개발자로서 존경합니다.`;
             } else {
-                title.textContent = "보스 레이드 성공 💦";
-                desc.textContent = `정말 끔찍한 난이도였죠? 인간 승리입니다. ${currentDay}일이 걸렸습니다!`;
+                title.textContent = "절망의 연대기 💦";
+                desc.textContent = `클리어 하셨군요! 이 극악의 난이도를 깨는데 ${currentDay}초 단위의 땀방울을 흘리셨습니다!`;
             }
             
             document.getElementById('game-over').classList.add('active');
@@ -637,13 +654,16 @@
                 { type: 'player', x: player.x, y: player.y, emoji: '🤠', size: player.size }
             ];
             obstacles.forEach(o => renderables.push({ type: 'obstacle', x: o.x, y: o.y, emoji: o.emoji, size: o.size }));
-            // 본체와 똑같은 크기와 모양을 한 분신
             clones.forEach(c => renderables.push({ type: 'clone', x: c.x, y: c.y, emoji: '🐺', size: c.size }));
 
             renderables.sort((a,b) => a.y - b.y); 
-            renderables.forEach(r => renderEmoji(r.emoji, r.x, r.y, r.size));
+            renderables.forEach(r => {
+                // 본체 늑구 기믹: 투명화(은신) 상태일 땐 거의 안 보임
+                if (r.type === 'nukgu' && nukgu.invisibleTimer > 0) ctx.globalAlpha = 0.15;
+                renderEmoji(r.emoji, r.x, r.y, r.size);
+                ctx.globalAlpha = 1.0;
+            });
 
-            // 파티클 (맨 위에 그려짐)
             particles.forEach(p => {
                ctx.globalAlpha = p.life > 0.5 ? 1.0 : p.life * 2;
                renderEmoji(p.text, p.x, p.y, p.size);
