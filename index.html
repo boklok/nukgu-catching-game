@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대전 오월드 늑구 잡기 - 액션 모드</title>
+    <style>
+        :root {
+            --bg-color: #f0fdf4;
+            --primary-color: #166534;
+            --secondary-color: #22c55e;
+            --accent-color: #fbbf24;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .game-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 850px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        p.subtitle {
+            color: #4b5563;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #e5e7eb;
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        #day-counter { color: #ef4444; font-size: 24px; }
+        #score-display { color: #3b82f6; font-size: 24px;}
+
+        #gameCanvas {
+            background-color: #86efac;
+            background-image: 
+                radial-gradient(#4ade80 15%, transparent 16%), 
+                radial-gradient(#4ade80 15%, transparent 16%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            border-radius: 12px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.15), 0 5px 15px rgba(0,0,0,0.1);
+            outline: none;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #gameCanvas:focus {
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.15), 0 0 0 4px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Modal styles */
+        .game-over-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .game-over-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+            max-width: 450px;
+        }
+
+        .game-over-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .game-over-overlay.active .game-over-modal {
+            transform: scale(1);
+        }
+
+        .modal-title { font-size: 28px; margin-bottom: 15px; color: var(--primary-color); }
+        .modal-desc { font-size: 18px; color: #4b5563; line-height: 1.5; }
+        .modal-score { font-size: 60px; font-weight: 900; color: var(--accent-color); margin: 20px 0; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn:hover { background-color: #14532d; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(0); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <h1>🐺 대전 오월드 늑구 포획 대작전!</h1>
+        <p class="subtitle">🎮 방향키(또는 W,A,S,D) 조작: 사육사(🤠)를 움직여 도망가는 늑구(🐺)에 접근하세요!</p>
+
+        <div class="stats">
+            <div>포획 소요 시간: <span id="day-counter">1</span>일째</div>
+            <div>예상 점수: <span id="score-display">100</span>점</div>
+        </div>
+
+        <!-- 클릭하여 포커스를 맞춰야 방향키 조작이 부드럽습니다 -->
+        <canvas id="gameCanvas" width="800" height="450" tabindex="0"></canvas>
+    </div>
+
+    <!-- 게임 오버 모달 -->
+    <div class="game-over-overlay" id="game-over">
+        <div class="game-over-modal">
+            <h2 class="modal-title" id="modal-title">늑구를 포획했습니다!</h2>
+            <p class="modal-desc" id="modal-desc">무사히 오월드로 돌아갔습니다.</p>
+            <div class="modal-score" id="final-score">100점</div>
+            <button class="btn" onclick="resetGame()">다시 잡으러 가기</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const dayCounterEl = document.getElementById('day-counter');
+        const scoreDisplayEl = document.getElementById('score-display');
+        
+        // Game Constants
+        const TARGET_DAYS = 9;   // 9초 = 9일 기준
+        const INITIAL_SCORE = 100;
+        const PENALTY = 10;
+
+        // Game State
+        let keys = {};
+        let gameTime = 0; // 초 단위
+        let currentDay = 1;
+        let isGameOver = false;
+        let isAnimating = false;
+        let lastTime = 0;
+        let animReq;
+
+        // Entities
+        let player = { x: 100, y: 225, size: 50, speed: 280 };
+        // 늑구는 유저보다 살짝 느리거나 비슷해야 코너로 몰아서 잡을 수 있습니다.
+        let nukgu = { x: 700, y: 225, size: 45, runSpeed: 230, walkSpeed: 80, dx: 0, dy: 0, currentSpeed: 0 };
+        let animState = { truckX: -150, truckY: 225 };
+        let bushes = [];
+        let aiTimer = 0;
+
+        // Input Listeners
+        canvas.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault(); // 방향키로 스크롤 방지
+            }
+        });
+        canvas.addEventListener('keyup', e => {
+            keys[e.key] = false;
+        });
+        // 캔버스 클릭 시 포커스
+        canvas.addEventListener('click', () => canvas.focus());
+
+        // Initialize Game
+        function resetGame() {
+            isGameOver = false;
+            isAnimating = false;
+            gameTime = 0;
+            currentDay = 1;
+            keys = {};
+
+            player.x = 100; player.y = canvas.height/2;
+            nukgu.x = canvas.width - 100; nukgu.y = canvas.height/2;
+            nukgu.dx = 0; nukgu.dy = 0;
+            
+            // 데코용 수풀 랜덤 생성
+            bushes = [];
+            for(let i=0; i<15; i++) {
+                bushes.push({
+                    x: 50 + Math.random() * (canvas.width - 100),
+                    y: 50 + Math.random() * (canvas.height - 100),
+                    size: 40 + Math.random() * 30
+                });
+            }
+
+            document.getElementById('game-over').classList.remove('active');
+            
+            lastTime = performance.now();
+            cancelAnimationFrame(animReq);
+            
+            // 캔버스 자동 포커스
+            canvas.focus();
+            
+            gameLoop(lastTime);
+        }
+
+        function calculateScore() {
+            if (currentDay <= TARGET_DAYS) return INITIAL_SCORE;
+            return Math.max(0, INITIAL_SCORE - ((currentDay - TARGET_DAYS) * PENALTY));
+        }
+
+        function updateStats() {
+            dayCounterEl.textContent = currentDay;
+            scoreDisplayEl.textContent = calculateScore();
+        }
+
+        function renderEmoji(emoji, x, y, size) {
+            ctx.font = size + 'px "Segoe UI Emoji", "Apple Color Emoji", Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // 그림자를 주어 이모지가 더 선명하게 보이게 함
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+            
+            ctx.fillText(emoji, x, y);
+            
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
+        function update(dt) {
+            if (isGameOver) return;
+
+            // 시간 업데이트 (1초 = 1일)
+            gameTime += dt;
+            currentDay = Math.floor(gameTime) + 1;
+            updateStats();
+
+            // 플레이어(사육사) 이동
+            let px = 0, py = 0;
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) py -= 1;
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) py += 1;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) px -= 1;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) px += 1;
+
+            // 대각선 이동 시 속도 정규화
+            if (px !== 0 && py !== 0) {
+                let length = Math.sqrt(px*px + py*py);
+                px /= length;
+                py /= length;
+            }
+
+            player.x += px * player.speed * dt;
+            player.y += py * player.speed * dt;
+
+            // 플레이어 화면 밖으로 나가는 것 방지
+            player.x = Math.max(player.size/2, Math.min(canvas.width - player.size/2, player.x));
+            player.y = Math.max(player.size/2, Math.min(canvas.height - player.size/2, player.y));
+
+            // 늑구 AI 로직
+            aiTimer += dt;
+            let dist = Math.hypot(player.x - nukgu.x, player.y - nukgu.y);
+
+            // 0.15초마다 판단을 내려 기민하게 움직임
+            if (aiTimer > 0.15) { 
+                aiTimer = 0;
+                if (dist < 220) {
+                    // 사육사가 가까이 오면 도망감 (사육사 반대 방향)
+                    let angle = Math.atan2(nukgu.y - player.y, nukgu.x - player.x);
+                    angle += (Math.random() - 0.5) * 0.8; // 약간의 노이즈
+                    nukgu.dx = Math.cos(angle);
+                    nukgu.dy = Math.sin(angle);
+                    nukgu.currentSpeed = nukgu.runSpeed;
+                } else {
+                    // 멀리 있으면 어슬렁어슬렁
+                    if (Math.random() < 0.3) {
+                        let angle = Math.random() * Math.PI * 2;
+                        nukgu.dx = Math.cos(angle);
+                        nukgu.dy = Math.sin(angle);
+                        nukgu.currentSpeed = nukgu.walkSpeed;
+                    } else if (Math.random() < 0.1) {
+                        nukgu.dx = 0; nukgu.dy = 0;
+                    }
+                }
+            }
+
+            nukgu.x += nukgu.dx * nukgu.currentSpeed * dt;
+            nukgu.y += nukgu.dy * nukgu.currentSpeed * dt;
+
+            // 늑구 화면 경계 처리 (벽에 부딪히면 튕기기) 포획을 위해 갇힐 수 있음
+            if (nukgu.x < nukgu.size/2) { nukgu.x = nukgu.size/2; nukgu.dx = Math.abs(nukgu.dx); }
+            if (nukgu.x > canvas.width - nukgu.size/2) { nukgu.x = canvas.width - nukgu.size/2; nukgu.dx = -Math.abs(nukgu.dx); }
+            if (nukgu.y < nukgu.size/2) { nukgu.y = nukgu.size/2; nukgu.dy = Math.abs(nukgu.dy); }
+            if (nukgu.y > canvas.height - nukgu.size/2) { nukgu.y = canvas.height - nukgu.size/2; nukgu.dy = -Math.abs(nukgu.dy); }
+
+            // 포획 판정 (원형 충돌)
+            if (dist < (player.size + nukgu.size)/2 * 0.8) { 
+                triggerGameOver();
+            }
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            isAnimating = true;
+            animState.truckX = -150;
+            animState.truckY = canvas.height / 2;
+        }
+
+        // 압송 애니메이션 그리기
+        function drawTruckAnim(dt) {
+            // 배경 어둡게
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 상단 텍스트
+            ctx.font = 'bold 36px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 10; ctx.shadowColor = 'black';
+            ctx.fillText('🚨 늑구 포획 완료! 대전 오월드로 압송 중 🚨', canvas.width/2, canvas.height/3);
+            ctx.shadowBlur = 0; 
+            
+            // 트럭 이동 (초당 350px)
+            animState.truckX += 350 * dt; 
+            
+            // 오월드 화물차 🚚 와 뒤에 탄 늑구 🐺 그리기
+            renderEmoji('🚚', animState.truckX, animState.truckY, 140);
+            renderEmoji('🐺', animState.truckX - 45, animState.truckY - 15, 45);
+
+            // 화면 밖을 벗어나면 모달 띄우기
+            if (animState.truckX > canvas.width + 200) {
+                isAnimating = false;
+                showResultModal();
+            }
+        }
+
+        function showResultModal() {
+            const title = document.getElementById('modal-title');
+            const desc = document.getElementById('modal-desc');
+            const finalScore = document.getElementById('final-score');
+
+            finalScore.textContent = calculateScore() + "점";
+            
+            if (currentDay <= TARGET_DAYS) {
+                title.textContent = "포획 대성공! 🎉";
+                desc.textContent = `굉장합니다! ${currentDay}일 만에 늑구를 코너로 몰아 넣었습니다! 시민들이 안심합니다.`;
+            } else {
+                title.textContent = "포획 완료 💦";
+                desc.textContent = `꽤 오래 도망 다녔네요. ${currentDay}일이나 걸려 오월드 수색팀이 고생했어요!`;
+            }
+            
+            document.getElementById('game-over').classList.add('active');
+        }
+
+        function draw() {
+            // 기존 캔버스 지우기 생략, 배경이 있으므로 투명도 때문에 clearReact 추천
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 원근감을 주기 위해 Y축 기준 정렬 후 그리기
+            let renderables = [
+                { type: 'nukgu', x: nukgu.x, y: nukgu.y, emoji: '🐺', size: nukgu.size },
+                { type: 'player', x: player.x, y: player.y, emoji: '🤠', size: player.size }
+            ];
+            bushes.forEach(b => renderables.push({ type: 'bush', x: b.x, y: b.y, emoji: '🌲', size: b.size }));
+
+            // Y축 정렬 (아래에 있는 오브젝트가 위에 그려지도록 2.5D 효과)
+            renderables.sort((a,b) => a.y - b.y);
+            
+            renderables.forEach(r => renderEmoji(r.emoji, r.x, r.y, r.size));
+        }
+
+        // Main Game Loop
+        function gameLoop(currentTime) {
+            let dt = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+            
+            // 다른 탭으로 이동 시 dt가 폭증하는 것 방지 (프레임 스킵)
+            if (dt > 0.1) dt = 0.1;
+
+            if (!isGameOver) {
+                update(dt);
+                draw();
+            } else if (isAnimating) {
+                draw(); // 배경에 멈춘 화면 그리기
+                drawTruckAnim(dt); // 그 위에 트럭 압송 애니메이션 덮어쓰기
+            }
+
+            animReq = requestAnimationFrame(gameLoop);
+        }
+
+        // Start game on load
+        window.onload = () => {
+            resetGame();
+        };
+    </script>
+</body>
+</html>
